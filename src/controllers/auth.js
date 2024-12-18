@@ -147,7 +147,7 @@ const loginDeliveryPartner = async (req, res) => {
 
         const { accessToken, refreshToken } = generateTokens(deliveryPartner);
         return res.status(200).send({
-            status: false,
+            status: true,
             message: "Login Sucessfully",
             deliveryPartner,
             accessToken,
@@ -165,7 +165,10 @@ const loginDeliveryPartner = async (req, res) => {
 //WE'R FETCHING DATA FROM TOKEN SO WE NEED jwt STORE DETAILS FROM USER
 const fetchUser = async (req, res) => {
     try {
-        const { userId, role } = req.body;
+        console.log("Now in fetchUser");
+        
+        //it's not req.body here because we are setting req.user token decrypt valure from middlware
+        const { userId, role } = req.user;
         if (!userId || !role) {
             return res.status(404).send({
                 status: false,
@@ -190,7 +193,7 @@ const fetchUser = async (req, res) => {
             user
         })
     } catch (error) {
-        return reply.status(500).send({status:false,message:"An error occured while fetching user",error})
+        return res.status(500).send({status:false,message:"An error occured while fetching user",error})
     }
 }
 

@@ -1,5 +1,6 @@
 const express = require('express');
 const { loginCustomer, loginDeliveryPartner, refreshToken, fetchUser } = require('../controllers/auth');
+const { verifyToken } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -7,6 +8,6 @@ const router = express.Router();
 router.post('/customer/login',loginCustomer);
 router.post('/delivery/login',loginDeliveryPartner);
 router.post('/refresh-token',refreshToken);
-router.post('/user',fetchUser);
+router.get('/user',verifyToken,fetchUser);
 
 module.exports = router;
