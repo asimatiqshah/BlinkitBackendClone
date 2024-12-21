@@ -14,7 +14,6 @@ const orderSchema = new mongoose.Schema({
     deliveryPartner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'DeliveryPartners',
-        required: true
     },
     branch: {
         type: mongoose.Schema.Types.ObjectId,

@@ -6,9 +6,13 @@
 // 3. now call it in app.js
 
 const authRoutes = require('./auth.js');
+const productRoutes = require('./product.js');
+const orderRoutes = require('./order.js');
 const registerRoutes = (app)=>{
     const prefix = "/api"; // Define a prefix for all the routes
     app.use(prefix,authRoutes); // Register the auth routes with the prefix
+    app.use(prefix,productRoutes);
+    app.use(prefix,orderRoutes);
 }
 
 module.exports={
