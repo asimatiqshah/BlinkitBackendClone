@@ -4,6 +4,7 @@ const { Order } = require("./src/models/order");
 const { connectDB } = require("./src/config/connect");
 const { Basket } = require("./src/models/basket");
 const { Customer } = require("./src/models/user");
+const { Product } = require("./src/models");
 require('dotenv').config();
 
 // const testOrderCreation = async () => {
@@ -65,10 +66,10 @@ const fetchBasketItems = async () => {
     try {
         await connectDB(process.env.MONGO_URI);
         let result = await Basket.findOne({ userId: "6747233018711451a1ddfe58"}) // Replace with an actual ObjectId
-        .populate("userId") // Populate customer details
-        .populate("productId");
+        .populate({path:"userId",select:"-_id"})
+        .populate({ path: "productId", select: "-_id -category"})
+        .select("-_id");
         console.log(result);
-        
     } catch (error) {
         console.log("Error fetching basket details in test.js", error);
     }
@@ -76,5 +77,4 @@ const fetchBasketItems = async () => {
         await mongoose.connection.close();
     }
 }
-Customer
 fetchBasketItems();
