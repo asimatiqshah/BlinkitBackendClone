@@ -1,6 +1,7 @@
 // Import the Express module
 const express = require('express');
 const morgan = require('morgan');
+const cors = require('cors');
 const { connectDB } = require('./src/config/connect');
 const { Customer, Admin, DeliveryPartner, Branch } = require('./src/models/index.js');
 
@@ -22,6 +23,7 @@ connectDB(uri);
 //middleware
 app.use(morgan('dev'));
 app.use(express.json());
+app.use(cors());
 // app.use('/auth',authRoutes);
 
 // Register  Routes

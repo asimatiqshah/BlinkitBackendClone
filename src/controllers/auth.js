@@ -83,7 +83,7 @@ const loginCustomer = async (req, res) => {
                 message: "Phone number is required"
             })
         }
-        let customer = await Customer.findOne({ phone });
+        let customer = await Customer.findOne({ phone });        
         if (!customer) {
             customer = await Customer.create({
                 phone,
@@ -94,10 +94,9 @@ const loginCustomer = async (req, res) => {
 
         const { accessToken, refreshToken } = generateTokens(customer);
         console.log(customer);
-        console.log(Object.keys(customer).length);
         return res.status(200).send({
             status: true,
-            message: customer.name ? "Login Sucessfully" : "Customer Created and Login In",
+            message: "Customer Created and Login In",
             customer,
             accessToken,
             refreshToken
