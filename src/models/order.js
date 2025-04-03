@@ -20,7 +20,7 @@ const orderSchema = new mongoose.Schema({
         ref: 'Branches',
         required: true
     },
-    item: [
+    items: [
         {
             id: {
                 type: mongoose.Schema.Types.ObjectId,
