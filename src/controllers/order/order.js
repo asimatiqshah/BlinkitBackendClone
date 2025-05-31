@@ -1,10 +1,12 @@
 const { Customer, DeliveryPartner } = require('../../models/user.js');
 const { Branch } = require('../../models/branch.js');
 const { Order } = require('../../models/order.js');
+const { default: mongoose } = require('mongoose');
 
 //CREATE ORDER
 const createOrder = async (req, res) => {
     try {
+
         const { userId } = req.user;
         const { items, branch, totalPrice } = req.body;
 
@@ -36,9 +38,13 @@ const createOrder = async (req, res) => {
                 address: branchData[0].address || "No address available",
             },
         });
+
         //SAVING DATA IN DATABASE
         const saveOrder = await newOrder.save();
-        return res.status(201).send(saveOrder);
+        const populateOrder = await Order.findById(saveOrder._id)
+            .populate('items.item');
+
+        return res.status(201).send(populateOrder);
     } catch (error) {
         return res.status(500).send({ message: "Failed to create order" });
     }
@@ -85,8 +91,9 @@ const confirmOrder = async (req, res) => {
 }
 
 //UPDATE ORDER STATUS
-const updateOrderStatus = async () => {
+const updateOrderStatus = async (req, res) => {
     try {
+
         const { orderId } = req.params;
         const { userId } = req.user;
         const { status, deliveryPersonLocation } = req.body;
@@ -105,7 +112,7 @@ const updateOrderStatus = async () => {
             return res.status(400).send({ message: "Order cannot updated" });
         }
 
-        if (order.deliveryPartner.toString !== userId) {
+        if (order.deliveryPartner.toString() !== userId) {
             return res.status(403).send({ message: "Unauthorized" });
         }
 
@@ -124,6 +131,9 @@ const updateOrderStatus = async () => {
 const getOrders = async (req, res) => {
     try {
         const { status, customerId, deliveryPartnerId, branchId } = req.query;
+        console.log(deliveryPartnerId);
+        
+        
         let query = {};
 
         if (status) {
@@ -133,13 +143,20 @@ const getOrders = async (req, res) => {
             query.customer = customerId;
         }
         if (deliveryPartnerId) {
-            query.deliveryPartner = deliveryPartnerId;
-            query.branch = branchId;
+            query.deliveryPartner = new mongoose.Types.ObjectId(deliveryPartnerId);
+            query.branch = new mongoose.Types.ObjectId(branchId);
         }
+        
+
+        // const orders = await Order.find(query).populate(
+        //     "customer branch items.item deliveryPartner"
+        // )
 
         const orders = await Order.find(query).populate(
-            "customer branch items.item deliveryPartner"
-        )
+            "customer branch deliveryPartner"
+        );
+        
+        
         return res.send(orders);
     } catch (error) {
         return res.status(500).send({ message: "Failed to confirm order" });
@@ -148,11 +165,11 @@ const getOrders = async (req, res) => {
 }
 
 
-const getOrderById = async () => {
+const getOrderById = async (req, res) => {
     try {
         const { orderId } = req.params;
         const order = await Order.findById(orderId).populate(
-            "customer branch items.item deliveryPartner"
+            "customer branch items.item"
         );
         if (!order) {
             return res.status(404).send({ message: "Order not found" });

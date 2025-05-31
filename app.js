@@ -111,9 +111,23 @@ app.post('/customerAddCheck', async (req, res) => {
 
 });
 
+// Setup socket events
+io.on("connection", (socket) => {
+    console.log("🔌 A User Connected ",socket.id);
+    
+    socket.on("joinRoom", (orderId) => {
+      socket.join(orderId);
+      console.log(`User Joined room ${orderId}`);
+    });
+  
+    // socket.on("disconnect", () => {
+    //   console.log("User Disconnected");
+    // });
+  });
+
 
 
 // Start the server
-app.listen(PORT, HOSTNAME, () => {
+server.listen(PORT, HOSTNAME, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 })
